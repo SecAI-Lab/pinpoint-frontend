@@ -632,3 +632,10 @@ table.rank tr.noDetail:hover td {
   font-family: var(--mono);
   font-size: 0.7rem;
 }
+
+#queryHeader.is-empty {
+  border-bottom: none;
+}
+#rankTableWrap:empty {
+  border: none;
+}

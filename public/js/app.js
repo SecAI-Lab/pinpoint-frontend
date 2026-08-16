@@ -30,9 +30,14 @@ const fileCount = document.getElementById('fileCount');
 const PICK_FILE = '<div class="empty">Pick a target binary to see its vulnerability queries.</div>';
 const PICK_QUERY = '<div class="empty">Pick a vulnerable reference to see its ranking.</div>';
 
+function setHeaderPlaceholder(html) {
+  queryHeaderEl.innerHTML = html;
+  queryHeaderEl.classList.add('is-empty');
+}
+
 function resetQueryPane() {
   queryListEl.innerHTML = PICK_FILE;
-  queryHeaderEl.innerHTML = PICK_FILE;
+  setHeaderPlaceholder(PICK_FILE);
   rankTableWrap.innerHTML = '';
   detailWrap.innerHTML = '';
 }
@@ -66,7 +71,7 @@ async function selectFile(f) {
   state.idx = null;
   state.target = null;
   drawFileList();
-  queryHeaderEl.innerHTML = PICK_QUERY;
+  setHeaderPlaceholder(PICK_QUERY);
   rankTableWrap.innerHTML = '';
   detailWrap.innerHTML = '';
   queryListEl.innerHTML = '<div class="empty">Loading…</div>';

@@ -6,6 +6,7 @@ export function renderQueryHeader(container, d) {
     : '';
   const field = (label, valueHtml) => `
     <div class="qh-field"><span class="qh-label">${label}</span>${valueHtml}</div>`;
+  container.classList.remove('is-empty');
   container.innerHTML = `
     <div class="qh-title">
       <span class="qh-label">Vulnerable reference</span><b>${d.vuln_func}</b>${inlineNote}
