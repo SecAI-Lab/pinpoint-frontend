@@ -1,4 +1,4 @@
-# PinPoint-BinShot Result Explorer
+# Pinpoint Result Visualizer
 
 Static site for browsing the vulnerability-search results. The query payloads live
 in a private Hugging Face dataset; a small Vercel function fetches them with a

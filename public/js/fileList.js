@@ -9,14 +9,14 @@ export function renderFileList(container, countEl, allFiles, rawTerm, currentFil
   const files = terms.length
     ? allFiles.filter(f => terms.some(t => matchesTerm(f, t)))
     : allFiles;
-  countEl.textContent = `${files.length} / ${allFiles.length} files`;
+  countEl.textContent = `${files.length} / ${allFiles.length} target binaries`;
   container.innerHTML = '';
   const frag = document.createDocumentFragment();
   for (const f of files) {
     const d = document.createElement('div');
     d.className = 'list-item' + (f.key === currentFile ? ' active' : '');
     d.textContent = f.key;
-    if (f.cves.length) d.title = `CVEs queried against this target: ${f.cves.join(', ')}`;
+    if (f.cves.length) d.title = `CVEs queried against this target binary: ${f.cves.join(', ')}`;
     d.addEventListener('click', () => onSelect(f.key));
     frag.appendChild(d);
   }

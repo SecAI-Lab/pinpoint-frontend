@@ -27,8 +27,8 @@ const dbSelect = document.getElementById('dbSelect');
 const fileSearch = document.getElementById('fileSearch');
 const fileCount = document.getElementById('fileCount');
 
-const PICK_FILE = '<div class="empty">Pick a target file to see its queries.</div>';
-const PICK_QUERY = '<div class="empty">Pick a query to see its ranking table.</div>';
+const PICK_FILE = '<div class="empty">Pick a target binary to see its vulnerability queries.</div>';
+const PICK_QUERY = '<div class="empty">Pick a vulnerable reference to see its ranking.</div>';
 
 function resetQueryPane() {
   queryListEl.innerHTML = PICK_FILE;
@@ -48,7 +48,7 @@ async function loadFiles() {
     drawFileList();
   } catch (err) {
     state.allFiles = [];
-    fileListEl.innerHTML = failure(`the ${state.db} file list`, err);
+    fileListEl.innerHTML = failure(`the ${state.db} target list`, err);
     fileCount.textContent = '';
   }
 }
@@ -76,7 +76,7 @@ async function selectFile(f) {
     drawQueryList();
   } catch (err) {
     state.allQueries = [];
-    queryListEl.innerHTML = failure('the query list for this target', err);
+    queryListEl.innerHTML = failure('the query list for this target binary', err);
   }
 }
 
@@ -93,7 +93,7 @@ async function selectQuery(idx) {
       data.details ? Object.keys(data.details) : null);
   } catch (err) {
     state.rankings = [];
-    rankTableWrap.innerHTML = failure('the ranking table for this query', err);
+    rankTableWrap.innerHTML = failure('the ranking for this query', err);
     detailWrap.innerHTML = '';
   }
 }
@@ -108,7 +108,7 @@ async function selectCandidate(func) {
     const data = await api('/api/detail', { db: state.db, file: state.file, idx: state.idx, target: func });
     renderDetail(detailWrap, data);
   } catch (err) {
-    detailWrap.innerHTML = failure(`the detail for ${func}`, err);
+    detailWrap.innerHTML = failure(`the sliding-window data for ${func}`, err);
   }
 }
 

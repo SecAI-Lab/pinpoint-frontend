@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>PinPoint-BinShot Result Explorer</title>
+<title>Pinpoint Result Visualizer</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header>
-  <h1>PinPoint-BinShot Result Explorer</h1>
+  <h1>Pinpoint Result Visualizer</h1>
   <button id="helpToggle" class="helpToggle" type="button" title="Terminology guide">?</button>
   <button id="themeToggle" class="themeToggle" type="button" title="Toggle dark/light mode">🌙</button>
 </header>
 
 <div class="controls">
-  <label class="inline">DB
+  <label class="inline">Reference DB
     <select id="dbSelect">
-      <option value="regular">regular</option>
-      <option value="fno_inline">fno_inline</option>
+      <option value="regular">default builds</option>
+      <option value="fno_inline">-fno-inline</option>
     </select>
   </label>
-  <input type="search" id="fileSearch" placeholder="Search files by name, CVE, or vulnerable reference (space-separated for multiple)…" />
+  <input type="search" id="fileSearch" placeholder="Search target binaries by name, CVE, or vulnerable reference…" />
   <span id="fileCount" class="sub" style="margin-left:auto;color:var(--text-faint);font-size:0.72rem;"></span>
 </div>
 
@@ -28,9 +28,9 @@
   <div id="fileList"></div>
   <div id="right">
     <div id="queryListWrap">
-      <div id="queryList"><div class="empty">Pick a target file to see its queries.</div></div>
+      <div id="queryList"><div class="empty">Pick a target binary to see its vulnerability queries.</div></div>
       <div id="rightCol">
-        <div id="queryHeader"><div class="empty">Pick a target file to see its queries.</div></div>
+        <div id="queryHeader"><div class="empty">Pick a target binary to see its vulnerability queries.</div></div>
         <div id="body">
           <div id="rankTableWrap"></div>
           <div id="detailWrap"></div>

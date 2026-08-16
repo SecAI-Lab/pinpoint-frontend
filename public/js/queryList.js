@@ -10,7 +10,7 @@ function sortQueries(queries) {
 }
 
 export function renderQueryList(container, allQueries, currentIdx, onSelect) {
-  container.innerHTML = `<div class="listCaption">One row per reference build. The badge shows this target's <b>rank / stage</b>.</div>`;
+  container.innerHTML = `<div class="listCaption">One row per vulnerable reference. The badge shows its <b>rank and terminating stage</b>.</div>`;
   if (!allQueries.length) {
     container.innerHTML += `<div class="empty">No queries in this file.</div>`;
     return;
@@ -23,7 +23,7 @@ export function renderQueryList(container, allQueries, currentIdx, onSelect) {
     if (!q.gt_evaluable && !printedUnevaluableHeader) {
       const hdr = document.createElement('div');
       hdr.className = 'list-group-hdr';
-      hdr.textContent = 'No known answer for this target';
+      hdr.textContent = 'No ground truth for this target binary';
       frag.appendChild(hdr);
       printedUnevaluableHeader = true;
     }
@@ -32,8 +32,8 @@ export function renderQueryList(container, allQueries, currentIdx, onSelect) {
     let gtBadge = '';
     if (q.gt_evaluable) {
       gtBadge = q.gt_best_rank != null
-        ? `<span class="gtRankBadge hit">rank=${q.gt_best_rank}${q.gt_best_stage ? ' / ' + q.gt_best_stage : ''}</span>`
-        : `<span class="gtRankBadge miss">not found</span>`;
+        ? `<span class="gtRankBadge hit">Top-${q.gt_best_rank}${q.gt_best_stage ? ' / ' + q.gt_best_stage : ''}</span>`
+        : `<span class="gtRankBadge miss">not retrieved</span>`;
     }
     d.innerHTML = `${q.idx}. ${q.vuln_func} ${gtBadge}<span class="meta">${q.vuln_compiler}-${q.vuln_opt}</span>`;
     d.addEventListener('click', () => onSelect(q.idx));

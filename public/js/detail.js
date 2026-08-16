@@ -17,9 +17,9 @@ function vulnUsageText(d) {
     const bbRange = tokenRangeToBBRange(d.vuln, lo, hi);
     const totalBBs = d.vuln.basic_blocks.length;
     const usedBBs = bbRange ? (bbRange.end_bb - bbRange.start_bb + 1) : 0;
-    return `Used ${usedBBs} of ${totalBBs} basic blocks (${tokensUsed}/${totalTokens} tokens)`;
+    return `Reference window: ${usedBBs} of ${totalBBs} basic blocks (${tokensUsed}/${totalTokens} tokens)`;
   }
-  return `Used ${tokensUsed} of ${totalTokens} tokens`;
+  return `Reference window: ${tokensUsed} of ${totalTokens} tokens`;
 }
 
 export function renderDetail(detailWrap, d) {
@@ -27,7 +27,7 @@ export function renderDetail(detailWrap, d) {
   activeCharts = [];
 
   if (d.unavailable) {
-    detailWrap.innerHTML = `<div class="empty">No exported data for <b>${d.target_func}</b> in this query.</div>`;
+    detailWrap.innerHTML = `<div class="empty">No sliding-window data exported for <b>${d.target_func}</b>.</div>`;
     return;
   }
 
@@ -36,14 +36,14 @@ export function renderDetail(detailWrap, d) {
 
   let html = `
     <div class="vuln-info">
-      <div class="vuln-info-label">REFERENCE &nbsp;${d.vuln ? d.vuln.func_name + ' (' + d.vuln_json_key + ')' : '(no data)'}${d.vuln ? ', ' + d.vuln.n_tokens + ' tokens' : ''}</div>
+      <div class="vuln-info-label">VULNERABLE REFERENCE &nbsp;${d.vuln ? d.vuln.func_name + ' (' + d.vuln_json_key + ')' : '(no data)'}${d.vuln ? ', ' + d.vuln.n_tokens + ' tokens' : ''}</div>
       <div class="vuln-usage">${vulnUsageText(d)}</div>
     </div>
   `;
 
   if (d.other_vuln_inlines && d.other_vuln_inlines.length) {
     html += `<div class="vuln-info" style="margin-top:6px;">
-      <div class="vuln-info-label">This candidate also has ${d.other_vuln_inlines.length > 1 ? 'other vulnerable functions' : 'another vulnerable function'} inlined into it:</div>
+      <div class="vuln-info-label">Type IV: this candidate also inlines ${d.other_vuln_inlines.length > 1 ? 'other vulnerable references' : 'another vulnerable reference'}:</div>
       ${d.other_vuln_inlines.map((g, i) => {
         const c = OTHER_VULN_COLORS[i % OTHER_VULN_COLORS.length];
         const nesting = d.target ? `${d.target.func_name}(${g.vuln_func})` : g.vuln_func;
@@ -53,50 +53,49 @@ export function renderDetail(detailWrap, d) {
   }
 
   if (isStage1) {
-    html += `<div class="empty">This candidate got its top score from Stage 1 (whole function, truncated to the model's max input of ${MAX_TOKENS} tokens).
-      There's no sliding window like Stage 2/3 (only one comparison was made), so there's no window score graph.
-      The target side was truncated to its own first ${MAX_TOKENS} tokens the same way (see the token count above for the reference side).</div>`;
+    html += `<div class="empty">Stage 1 (whole-function comparison) hit the threshold, so no sliding window ran.
+      Both sides were truncated to ${MAX_TOKENS} tokens.</div>`;
   } else {
     const otherVulnLegend = (d.other_vuln_inlines || []).map((g, i) =>
       `<span><span class="sw" style="background:${OTHER_VULN_COLORS[i % OTHER_VULN_COLORS.length]};"></span>${g.vuln_func} (other vulnerable reference)</span>`
     ).join('');
     const chartLegend = (color, label) => `
       <div class="chartLegend">
-        <span><span class="sw" style="background:var(--gt);"></span>Ground-truth vulnerable range</span>
+        <span><span class="sw" style="background:var(--gt);"></span>Ground truth</span>
         ${otherVulnLegend}
-        <span><span class="sw" style="background:var(--model);"></span>Selected window</span>
+        <span><span class="sw" style="background:var(--model);"></span>Matched range</span>
         <span><span class="sw" style="background:${color};opacity:.4"></span>Hovered window</span>
         <span><span class="sw" style="background:${color};"></span>${label}</span>
       </div>`;
     if (d.stage2_windows.length) {
       html += `
         <div class="chartWrap">
-          <div class="chartTitle">Stage 2 (block-stride)${d.best_stage === 'stage2' ? ' <span class="chip">best stage</span>' : ''}</div>
-          ${chartLegend('var(--accent)', 'Stage 2 score')}
+          <div class="chartTitle">Stage 2 &middot; Block-stride search${d.best_stage === 'stage2' ? ' <span class="chip">terminating stage</span>' : ''}</div>
+          ${chartLegend('var(--accent)', 'Stage 2 similarity')}
           <canvas id="scoreChartS2" height="200"></canvas>
         </div>`;
     }
     if (d.stage3_windows.length) {
       html += `
         <div class="chartWrap">
-          <div class="chartTitle">Stage 3 (token-stride)${d.best_stage === 'stage3' ? ' <span class="chip">best stage</span>' : ''}</div>
-          ${chartLegend('#e0765f', 'Stage 3 score')}
+          <div class="chartTitle">Stage 3 &middot; Token-stride search${d.best_stage === 'stage3' ? ' <span class="chip">terminating stage</span>' : ''}</div>
+          ${chartLegend('#e0765f', 'Stage 3 similarity')}
           <canvas id="scoreChartS3" height="200"></canvas>
         </div>`;
     }
     if (d.stage2_attempted && !d.stage2_windows.length) {
-      html += `<div class="empty">Stage 2 was attempted but produced 0 windows. The target function's basic block count (${d.target ? d.target.basic_blocks.length : '?'})
-        is smaller than the required window size for the reference, so no BB window could be formed.</div>`;
+      html += `<div class="empty">Stage 2 produced 0 windows: the target has ${d.target ? d.target.basic_blocks.length : '?'} basic blocks,
+        fewer than the reference window needs.</div>`;
     }
     if (d.stage3_attempted && !d.stage3_windows.length) {
-      html += `<div class="empty">Stage 3 was attempted but produced 0 windows.</div>`;
+      html += `<div class="empty">Stage 3 produced 0 windows.</div>`;
     }
   }
 
   if (d.stage2_windows.length) {
     html += `<details class="windowsToggle"><summary>Stage 2 windows (${d.stage2_windows.length})</summary>
       <table class="windows" id="s2table"><thead><tr>
-        <th>#</th><th>BB range</th><th>Token range</th><th class="sortable" data-sort="score">Score <span class="sortArrow"></span></th>
+        <th>#</th><th>Block range</th><th>Token range</th><th class="sortable" data-sort="score">Similarity <span class="sortArrow"></span></th>
       </tr></thead><tbody>`;
     d.stage2_windows.forEach((w, i) => {
       html += `<tr data-i="${i}" data-score="${w.score}"><td>${i}</td><td>[${w.start_bb}:${w.end_bb}]</td><td>[${w.token_start}:${w.token_end}]</td>
@@ -106,8 +105,8 @@ export function renderDetail(detailWrap, d) {
   }
 
   if (d.stage3_windows.length) {
-    html += `<details class="windowsToggle"><summary>Stage 3 windows (token-stride, ${d.stage3_windows.length})</summary>
-      <table class="windows" id="s3table"><thead><tr><th>#</th><th>Token range</th><th class="sortable" data-sort="score">Score <span class="sortArrow"></span></th></tr></thead><tbody>`;
+    html += `<details class="windowsToggle"><summary>Stage 3 windows (${d.stage3_windows.length})</summary>
+      <table class="windows" id="s3table"><thead><tr><th>#</th><th>Token range</th><th class="sortable" data-sort="score">Similarity <span class="sortArrow"></span></th></tr></thead><tbody>`;
     d.stage3_windows.forEach((w, i) => {
       html += `<tr data-i="${i}" data-score="${w.score}"><td>${i}</td><td>[${w.start_tok}:${w.end_tok}]</td>
         <td>${w.score.toFixed(2)}<span class="scorebar"><span style="width:${Math.round(w.score*100)}%"></span></span></td></tr>`;
@@ -116,7 +115,7 @@ export function renderDetail(detailWrap, d) {
   }
 
   if (!isStage1 && !d.stage2_windows.length && !d.stage3_windows.length) {
-    html += `<div class="empty">No window dump for this (query, target) pair (no dump in this file).</div>`;
+    html += `<div class="empty">No window data for this pair.</div>`;
   }
 
   detailWrap.innerHTML = html;
@@ -142,14 +141,14 @@ export function renderDetail(detailWrap, d) {
     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     chartS2 = setupStageChart('scoreChartS2', points, accentColor, gtSpans,
       d.best_stage === 'stage2' ? bestRange : null, nTokens,
-      w => `stage2  BB[${w.start_bb}:${w.end_bb}]  tok[${w.token_start}:${w.token_end}]  score=${w.score.toFixed(2)}`,
+      w => `Stage 2   blocks [${w.start_bb}:${w.end_bb}]   tokens [${w.token_start}:${w.token_end}]   similarity ${w.score.toFixed(2)}`,
       (p) => highlightWindowRow('s2table', p ? p.i : null), otherSpans);
   }
   if (d.stage3_windows.length) {
     const points = d.stage3_windows.map((w, i) => ({ x: w.start_tok, y: w.score, i, w, range: [w.start_tok, w.end_tok] }));
     chartS3 = setupStageChart('scoreChartS3', points, '#e0765f', gtSpans,
       d.best_stage === 'stage3' ? bestRange : null, nTokens,
-      w => `stage3  tok[${w.start_tok}:${w.end_tok}]  score=${w.score.toFixed(2)}`,
+      w => `Stage 3   tokens [${w.start_tok}:${w.end_tok}]   similarity ${w.score.toFixed(2)}`,
       (p) => highlightWindowRow('s3table', p ? p.i : null), otherSpans);
   }
   activeCharts = [chartS2, chartS3].filter(Boolean);
