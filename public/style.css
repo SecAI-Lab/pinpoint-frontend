@@ -624,3 +624,11 @@ table.rank tr.noDetail td {
 table.rank tr.noDetail:hover td {
   opacity: 0.7;
 }
+
+.empty .failReason {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--miss-text);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}

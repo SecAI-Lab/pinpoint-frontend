@@ -33,10 +33,20 @@ function resetQueryPane() {
   detailWrap.innerHTML = '';
 }
 
+function failure(what, err) {
+  return `<div class="empty">Could not load ${what}.<br><span class="failReason">${err.message}</span></div>`;
+}
+
 async function loadFiles() {
-  const data = await api('/api/files', { db: state.db });
-  state.allFiles = data.files;
-  drawFileList();
+  try {
+    const data = await api('/api/files', { db: state.db });
+    state.allFiles = data.files;
+    drawFileList();
+  } catch (err) {
+    state.allFiles = [];
+    fileListEl.innerHTML = failure(`the ${state.db} file list`, err);
+    fileCount.textContent = '';
+  }
 }
 
 function drawFileList() {
@@ -55,20 +65,33 @@ async function selectFile(f) {
   queryHeaderEl.innerHTML = '<div class="empty">Select a query.</div>';
   rankTableWrap.innerHTML = '<div class="empty">Once you select a query, the ranking table will appear here.</div>';
   detailWrap.innerHTML = '';
-  const data = await api('/api/queries', { db: state.db, file: f });
-  state.allQueries = data.queries;
-  drawQueryList();
+  queryListEl.innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const data = await api('/api/queries', { db: state.db, file: f });
+    state.allQueries = data.queries;
+    drawQueryList();
+  } catch (err) {
+    state.allQueries = [];
+    queryListEl.innerHTML = failure('the query list for this target', err);
+  }
 }
 
 async function selectQuery(idx) {
   state.idx = idx;
   state.target = null;
   drawQueryList();
-  const data = await api('/api/rankings', { db: state.db, file: state.file, idx });
-  state.rankings = data.rankings;
-  renderQueryHeader(queryHeaderEl, data);
-  renderRankingTable(rankTableWrap, detailWrap, data.rankings, state.target, selectCandidate,
-    data.details ? Object.keys(data.details) : null);
+  rankTableWrap.innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const data = await api('/api/rankings', { db: state.db, file: state.file, idx });
+    state.rankings = data.rankings;
+    renderQueryHeader(queryHeaderEl, data);
+    renderRankingTable(rankTableWrap, detailWrap, data.rankings, state.target, selectCandidate,
+      data.details ? Object.keys(data.details) : null);
+  } catch (err) {
+    state.rankings = [];
+    rankTableWrap.innerHTML = failure('the ranking table for this query', err);
+    detailWrap.innerHTML = '';
+  }
 }
 
 async function selectCandidate(func) {
@@ -77,8 +100,12 @@ async function selectCandidate(func) {
     tr.classList.toggle('selected', tr.dataset.func === func);
   });
   detailWrap.innerHTML = '<div class="empty">Loading…</div>';
-  const data = await api('/api/detail', { db: state.db, file: state.file, idx: state.idx, target: func });
-  renderDetail(detailWrap, data);
+  try {
+    const data = await api('/api/detail', { db: state.db, file: state.file, idx: state.idx, target: func });
+    renderDetail(detailWrap, data);
+  } catch (err) {
+    detailWrap.innerHTML = failure(`the detail for ${func}`, err);
+  }
 }
 
 dbSelect.addEventListener('change', () => {
