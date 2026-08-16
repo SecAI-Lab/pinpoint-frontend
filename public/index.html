@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PinPoint-BinShot Result Explorer</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>PinPoint-BinShot Result Explorer</h1>
+  <button id="helpToggle" class="helpToggle" type="button" title="Terminology guide" style="margin-left:auto;">?</button>
+  <button id="themeToggle" class="themeToggle" type="button" title="Toggle dark/light mode">🌙</button>
+</header>
+
+<div class="controls">
+  <label class="inline">DB
+    <select id="dbSelect">
+      <option value="regular">regular</option>
+      <option value="fno_inline">fno_inline</option>
+    </select>
+  </label>
+  <input type="search" id="fileSearch" placeholder="Search files by name, CVE, or vulnerable reference (space-separated for multiple)…" />
+  <span id="fileCount" class="sub" style="margin-left:auto;color:var(--text-faint);font-size:0.72rem;"></span>
+</div>
+
+<main>
+  <div id="fileList"></div>
+  <div id="right">
+    <div id="queryListWrap">
+      <div id="queryList"></div>
+      <div id="rightCol">
+        <div id="queryHeader"><div class="empty">Select a target file and a query on the left.</div></div>
+        <div id="body">
+          <div id="rankTableWrap"><div class="empty">Once you select a query, the ranking table will appear here.</div></div>
+          <div id="detailWrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="errBanner"></div>
+<div class="chartTooltip" id="chartTooltip"></div>
+
+<script src="js/config.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

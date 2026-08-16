@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": null,
+  "functions": {
+    "api/data.py": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/data/(.*)\\.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}
