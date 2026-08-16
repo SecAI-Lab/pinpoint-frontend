@@ -91,7 +91,6 @@ header .sub {
 }
 
 .themeToggle {
-  margin-left: auto;
   width: 32px;
   height: 32px;
   background: var(--surface);
@@ -107,6 +106,7 @@ header .sub {
 }
 
 .helpToggle {
+  margin-left: auto;
   width: 32px;
   height: 32px;
   background: var(--surface);
@@ -174,8 +174,8 @@ header .sub {
   padding: 6px 18px 18px;
 }
 .helpSection h3 {
-  margin: 16px 0 6px;
-  font-size: 0.78rem;
+  margin: 12px 0 4px;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--accent);
@@ -183,22 +183,22 @@ header .sub {
 .helpSection dl {
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(120px, auto) 1fr;
-  column-gap: 14px;
-  row-gap: 8px;
+  grid-template-columns: minmax(96px, auto) 1fr;
+  column-gap: 12px;
+  row-gap: 3px;
 }
 .helpSection dt {
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   font-weight: 650;
   color: var(--text);
   white-space: nowrap;
 }
 .helpSection dd {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.73rem;
   color: var(--text-dim);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .controls {

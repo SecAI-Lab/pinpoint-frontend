@@ -27,9 +27,13 @@ const dbSelect = document.getElementById('dbSelect');
 const fileSearch = document.getElementById('fileSearch');
 const fileCount = document.getElementById('fileCount');
 
+const PICK_FILE = '<div class="empty">Pick a target file to see its queries.</div>';
+const PICK_QUERY = '<div class="empty">Pick a query to see its ranking table.</div>';
+
 function resetQueryPane() {
-  queryHeaderEl.innerHTML = '<div class="empty">Select a query.</div>';
-  rankTableWrap.innerHTML = '<div class="empty">Once you select a query, the ranking table will appear here.</div>';
+  queryListEl.innerHTML = PICK_FILE;
+  queryHeaderEl.innerHTML = PICK_FILE;
+  rankTableWrap.innerHTML = '';
   detailWrap.innerHTML = '';
 }
 
@@ -62,8 +66,8 @@ async function selectFile(f) {
   state.idx = null;
   state.target = null;
   drawFileList();
-  queryHeaderEl.innerHTML = '<div class="empty">Select a query.</div>';
-  rankTableWrap.innerHTML = '<div class="empty">Once you select a query, the ranking table will appear here.</div>';
+  queryHeaderEl.innerHTML = PICK_QUERY;
+  rankTableWrap.innerHTML = '';
   detailWrap.innerHTML = '';
   queryListEl.innerHTML = '<div class="empty">Loading…</div>';
   try {

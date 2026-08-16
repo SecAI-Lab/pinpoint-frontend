@@ -9,7 +9,7 @@
 
 <header>
   <h1>PinPoint-BinShot Result Explorer</h1>
-  <button id="helpToggle" class="helpToggle" type="button" title="Terminology guide" style="margin-left:auto;">?</button>
+  <button id="helpToggle" class="helpToggle" type="button" title="Terminology guide">?</button>
   <button id="themeToggle" class="themeToggle" type="button" title="Toggle dark/light mode">🌙</button>
 </header>
 
@@ -28,11 +28,11 @@
   <div id="fileList"></div>
   <div id="right">
     <div id="queryListWrap">
-      <div id="queryList"></div>
+      <div id="queryList"><div class="empty">Pick a target file to see its queries.</div></div>
       <div id="rightCol">
-        <div id="queryHeader"><div class="empty">Select a target file and a query on the left.</div></div>
+        <div id="queryHeader"><div class="empty">Pick a target file to see its queries.</div></div>
         <div id="body">
-          <div id="rankTableWrap"><div class="empty">Once you select a query, the ranking table will appear here.</div></div>
+          <div id="rankTableWrap"></div>
           <div id="detailWrap"></div>
         </div>
       </div>
