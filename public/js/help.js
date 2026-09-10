@@ -2,7 +2,7 @@ const SECTIONS = [
   {
     title: 'Staged search',
     rows: [
-      ['Size-based pruning', 'Already applied here. Candidates smaller than 54% of the reference were dropped before ranking.'],
+      ['Size-ratio pruning', 'Already applied here. A candidate whose token size falls below 54% of the vulnerable reference (\u03b1 = 0.540) is skipped before matching.'],
       ['Stage 1', 'Whole-function comparison. Entry stage for Type I.'],
       ['Stage 2', 'Block-stride search. A window slides one basic block per step. Entry stage for Types II-IV.'],
       ['Stage 3', 'Token-stride search. One token per step, for ranges block boundaries miss.'],
@@ -24,7 +24,7 @@ const SECTIONS = [
     title: 'Localization',
     rows: [
       ['Ground truth', 'The vulnerable address range, recovered from DWARF metadata.'],
-      ['Matched range', 'Where PinPoint places the vulnerability inside the candidate.'],
+      ['Reported range', 'Where PinPoint places the vulnerability inside the candidate.'],
       ['Ranking', 'Candidate functions ordered by similarity score.'],
       ['Containment count', 'Tie-break: among top-scoring windows, the one covering the most other window starts wins.'],
     ],
@@ -35,7 +35,7 @@ const SECTIONS = [
       ['Vulnerable reference', 'The compiled vulnerable function being searched for.'],
       ['Candidate', 'A function recovered from the target binary.'],
       ['Target binary', 'The binary being inspected.'],
-      ['Reference build', 'The compiler and optimization level the reference was built with.'],
+      ['Reference configuration', 'The compiler and optimization level the reference was compiled with. The eight default builds are two compilers \u00d7 -O0 through -O3.'],
       ['default', 'GCC and Clang, -O0 through -O3, inlining left as the compiler chose.'],
       ['fno_inline', '-fno-inline builds, so Types II-IV still have a standalone reference.'],
     ],

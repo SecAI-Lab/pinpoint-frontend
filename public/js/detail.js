@@ -13,13 +13,16 @@ function vulnUsageText(d) {
   const [lo, hi] = bw.vuln_range;
   const tokensUsed = hi - lo;
   const totalTokens = d.vuln.n_tokens;
+  // The window covers only part of the reference when the backbone's token budget
+  // truncates it. When the whole reference fits, the line says nothing.
+  if (tokensUsed >= totalTokens) return '';
   if (d.best_stage === 'stage2') {
     const bbRange = tokenRangeToBBRange(d.vuln, lo, hi);
     const totalBBs = d.vuln.basic_blocks.length;
     const usedBBs = bbRange ? (bbRange.end_bb - bbRange.start_bb + 1) : 0;
-    return `Reference window: ${usedBBs} of ${totalBBs} basic blocks (${tokensUsed}/${totalTokens} tokens)`;
+    return `Reference window: ${usedBBs} of ${totalBBs} basic blocks (${tokensUsed} of ${totalTokens} tokens, truncated to the ${MAX_TOKENS}-token budget)`;
   }
-  return `Reference window: ${tokensUsed} of ${totalTokens} tokens`;
+  return `Reference window: ${tokensUsed} of ${totalTokens} tokens, truncated to the ${MAX_TOKENS}-token budget`;
 }
 
 export function renderDetail(detailWrap, d) {
@@ -27,7 +30,7 @@ export function renderDetail(detailWrap, d) {
   activeCharts = [];
 
   if (d.unavailable) {
-    detailWrap.innerHTML = `<div class="empty">No sliding-window data exported for <b>${d.target_func}</b>.</div>`;
+    detailWrap.innerHTML = `<div class="empty">No window-level data exported for <b>${d.target_func}</b>.</div>`;
     return;
   }
 
@@ -61,16 +64,16 @@ export function renderDetail(detailWrap, d) {
     ).join('');
     const chartLegend = (color, label) => `
       <div class="chartLegend">
-        <span><span class="sw" style="background:var(--gt);"></span>Ground truth</span>
+        <span><span class="sw" style="background:var(--gt);"></span>Vulnerable range</span>
         ${otherVulnLegend}
-        <span><span class="sw" style="background:var(--model);"></span>Matched range</span>
+        <span><span class="sw" style="background:var(--model);"></span>Reported range</span>
         <span><span class="sw" style="background:${color};opacity:.4"></span>Hovered window</span>
         <span><span class="sw" style="background:${color};"></span>${label}</span>
       </div>`;
     if (d.stage2_windows.length) {
       html += `
         <div class="chartWrap">
-          <div class="chartTitle">Stage 2 &middot; Block-stride search${d.best_stage === 'stage2' ? ' <span class="chip">terminating stage</span>' : ''}</div>
+          <div class="chartTitle">Stage 2 &middot; Block-stride search${d.best_stage === 'stage2' ? ' <span class="chip">last executed stage</span>' : ''}</div>
           ${chartLegend('var(--accent)', 'Stage 2 similarity')}
           <canvas id="scoreChartS2" height="200"></canvas>
         </div>`;
@@ -78,7 +81,7 @@ export function renderDetail(detailWrap, d) {
     if (d.stage3_windows.length) {
       html += `
         <div class="chartWrap">
-          <div class="chartTitle">Stage 3 &middot; Token-stride search${d.best_stage === 'stage3' ? ' <span class="chip">terminating stage</span>' : ''}</div>
+          <div class="chartTitle">Stage 3 &middot; Token-stride search${d.best_stage === 'stage3' ? ' <span class="chip">last executed stage</span>' : ''}</div>
           ${chartLegend('#e0765f', 'Stage 3 similarity')}
           <canvas id="scoreChartS3" height="200"></canvas>
         </div>`;
@@ -95,7 +98,7 @@ export function renderDetail(detailWrap, d) {
   if (d.stage2_windows.length) {
     html += `<details class="windowsToggle"><summary>Stage 2 windows (${d.stage2_windows.length})</summary>
       <table class="windows" id="s2table"><thead><tr>
-        <th>#</th><th>Block range</th><th>Token range</th><th class="sortable" data-sort="score">Similarity <span class="sortArrow"></span></th>
+        <th>#</th><th>Basic-block range</th><th>Token range</th><th class="sortable" data-sort="score">Similarity <span class="sortArrow"></span></th>
       </tr></thead><tbody>`;
     d.stage2_windows.forEach((w, i) => {
       html += `<tr data-i="${i}" data-score="${w.score}"><td>${i}</td><td>[${w.start_bb}:${w.end_bb}]</td><td>[${w.token_start}:${w.token_end}]</td>

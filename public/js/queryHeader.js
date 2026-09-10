@@ -15,7 +15,7 @@ export function renderQueryHeader(container, d) {
       <span class="chip">${d.target_compiler}-${d.target_opt}</span>
     </div>
     <div class="qh-fields">
-      ${field('Reference build', `<b>${d.vuln_project}/${d.vuln_binary} ${d.vuln_compiler}-${d.vuln_opt}</b>`)}
+      ${field('Reference configuration', `<b>${d.vuln_project}/${d.vuln_binary} ${d.vuln_compiler}-${d.vuln_opt}</b>`)}
       ${field('CVE', `<b>${cve}</b>`)}
       ${field('Reference tokens / basic blocks', `<b>${d.vuln_tokens} / ${d.vuln_blocks}</b>`)}
     </div>

@@ -8,8 +8,8 @@
 <body>
 
 <header>
-  <h1>Pinpoint Result Visualizer</h1>
-  <button id="helpToggle" class="helpToggle" type="button" title="Terminology guide">?</button>
+  <h1><a href="./" id="homeLink" title="Back to the start">Pinpoint Result Visualizer</a></h1>
+  <button id="guideToggle" class="guideToggle" type="button" title="How to read this page, and the paper's case studies">Guide &amp; examples</button>
   <button id="themeToggle" class="themeToggle" type="button" title="Toggle dark/light mode">🌙</button>
 </header>
 
@@ -27,6 +27,7 @@
 <main>
   <div id="fileList"></div>
   <div id="right">
+    <div id="welcome"></div>
     <div id="queryListWrap">
       <div id="queryList"><div class="empty">Pick a target binary to see its vulnerability queries.</div></div>
       <div id="rightCol">

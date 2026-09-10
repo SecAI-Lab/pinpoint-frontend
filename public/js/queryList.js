@@ -10,7 +10,7 @@ function sortQueries(queries) {
 }
 
 export function renderQueryList(container, allQueries, currentIdx, onSelect) {
-  container.innerHTML = `<div class="listCaption">One row per vulnerable reference. The badge shows its <b>rank and terminating stage</b>.</div>`;
+  container.innerHTML = `<div class="listCaption">One row per vulnerable reference. The badge shows its <b>rank and last executed stage</b>.</div>`;
   if (!allQueries.length) {
     container.innerHTML += `<div class="empty">No queries in this file.</div>`;
     return;

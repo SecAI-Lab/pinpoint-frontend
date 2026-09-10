@@ -1,9 +1,13 @@
 export function renderRankingTable(rankTableWrap, detailWrap, rankings, currentTarget, onSelectCandidate, detailFuncs) {
-  const gtRows = rankings.filter(r => r.is_gt).sort((a, b) => a.rank - b.rank);
+  // Candidates dropped by size-ratio pruning were never scored (best_stage 'none',
+  // score 0), so they carry no result and are left out of both sections.
+  const scored = rankings.filter(r => r.best_stage !== 'none');
+  const prunedCount = rankings.length - scored.length;
+  const gtRows = scored.filter(r => r.is_gt).sort((a, b) => a.rank - b.rank);
   const withDetail = detailFuncs ? new Set(detailFuncs) : null;
 
   let html = `<table class="rank"><thead><tr>
-    <th>Rank</th><th>Similarity</th><th>Stage</th><th>Candidate</th><th>Label</th><th>Matched range</th>
+    <th>Rank</th><th>Similarity</th><th>Stage</th><th>Candidate</th><th>Label</th><th>Reported range</th>
   </tr></thead><tbody>`;
 
   const bestWindowCell = (r) => {
@@ -32,10 +36,14 @@ export function renderRankingTable(rankTableWrap, detailWrap, rankings, currentT
     html += gtRows.map(rowHtml).join('');
     html += `<tr class="tableGroupSep"><td colspan="6">Full ranking</td></tr>`;
   }
-  html += rankings.map(rowHtml).join('');
+  html += scored.map(rowHtml).join('');
+  if (prunedCount) {
+    html += `<tr class="tablePruned"><td colspan="6">${prunedCount} further candidate${
+      prunedCount === 1 ? '' : 's'} skipped by size-ratio pruning, not shown</td></tr>`;
+  }
   html += `</tbody></table>`;
   rankTableWrap.innerHTML = html;
-  detailWrap.innerHTML = '<div class="empty">Click a candidate to see its sliding-window scores.</div>';
+  detailWrap.innerHTML = '<div class="empty">Click a candidate to see its window-level similarity scores.</div>';
   rankTableWrap.querySelectorAll('tr[data-func]').forEach(tr => {
     tr.addEventListener('click', () => onSelectCandidate(tr.dataset.func));
   });
