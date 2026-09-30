@@ -1,5 +1,6 @@
 import { api } from './api.js';
 import { initTheme } from './theme.js';
+import { initCite } from './cite.js';
 import { renderFileList } from './fileList.js';
 import { renderQueryList } from './queryList.js';
 import { renderQueryHeader } from './queryHeader.js';
@@ -14,6 +15,13 @@ window.addEventListener('error', (e) => {
 });
 
 initTheme(document.getElementById('themeToggle'));
+initCite(
+  document.getElementById('cite'),
+  document.getElementById('citeToggle'),
+  document.getElementById('citePanel'),
+  document.getElementById('citeCopy'),
+  document.getElementById('citeBib'),
+);
 
 const state = { db: 'regular', file: null, idx: null, target: null, rankings: [], allFiles: [], allQueries: [] };
 
