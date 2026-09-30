@@ -1104,7 +1104,7 @@ svg.anatomy .anTag {
 .wCite {
   margin-top: 20px;
   padding: 13px 14px;
-  background: var(--surface);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -1130,7 +1130,7 @@ svg.anatomy .anTag {
 .wCiteBib {
   margin: 10px 0 0;
   padding: 9px 10px;
-  background: var(--bg);
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
@@ -1153,7 +1153,7 @@ svg.anatomy .anTag {
   align-items: center;
   height: 27px;
   padding: 0 10px;
-  background: var(--surface-2);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
