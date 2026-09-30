@@ -1,4 +1,5 @@
 import { PAPER_CASES } from './examples.js';
+import { citeCard, bindCite } from './cite.js';
 
 // One narrow column, read top to bottom: what the tool does, the four panes, the
 // mechanism the fourth pane draws, then the paper's cases as plain links.
@@ -182,6 +183,7 @@ export function renderWelcome(container, onOpenCase) {
       <section class="wSection">
         <h3>Examples from the paper <span class="wSectionNote">Figure 6</span></h3>
         <div class="wCases">${PAPER_CASES.map(caseLink).join('')}</div>
+        ${citeCard()}
       </section>
     </div>
   </div>`;
@@ -189,4 +191,6 @@ export function renderWelcome(container, onOpenCase) {
   container.querySelectorAll('.wCase').forEach(btn => {
     btn.addEventListener('click', () => onOpenCase(PAPER_CASES[+btn.dataset.case]));
   });
+
+  bindCite(container);
 }
